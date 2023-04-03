@@ -8,7 +8,7 @@ Note that the hashing functions that programming languages use will likely be mo
 
 Cryptography is a fascinating field, and you should definitely research more of it if you're interested, but it falls outside of the scope of this lesson.
 
-### Setting up our Classes
+## Setting up our Classes
 
 We're going to be building our custom Hash Tables in both Python and Ruby. The hash table we'll be building will have an array as its underlying data structure, and will use separate chaining to handle collisions. To set this up, we're going to need 3 classes:
 
@@ -23,7 +23,7 @@ class HashTable:
 
 Our `HashTable` class is what we'll use to create a new HashTable. We'll use the `LinkedList` class to set up LinkedLists that correspond to each index in the array that implements our HashTable. Finally, we'll use the `Node` class to implement our LinkedList. A singly Linked List will work fine for our purposes.
 
-### Initializing instances of our classes
+## Initializing instances of our classes
 
 Now that we have our classes created, let's create initialize methods so that we can actually start creating instances using our classes:
 
@@ -51,19 +51,19 @@ class HashTable:
 
 Let's break down why we wrote each initialize function in this manner:
 
-#### HashTable Init
+### HashTable Init
 - When creating our hash table, we want to start it off with a certain number of `buckets` that we can use to store key value pairs. So, we set our buckets to an array of a starting size.
 - One `bucket` - which corresponds with one index in our array - will store a LinkedList, which we can use to store multiple key value pairs if we end up getting any collisions.
 
-#### LinkedList Init
+### LinkedList Init
 - When creating a new LinkedList, we don't initially store any nodes within it. So, we can just set the `head` to `None` for the time being.
 
-#### Node Init
+### Node Init
 - A Node is going to be a single entry within our Linked List. In other words, our Linked List is going to be a series of Nodes connected to one another.
 - We want each Node in our Linked List to store information about a specific key and value that we've put in our Hash Table. So, we give it a field to store a key and a field to store a value. We also allow the `init` function to receive the new key and value as arguments.
 - Nodes in a Singly Linked List are connected by a `next_node` field in each Node. The `next_node` field points the the next node in the Linked List (for more on this, refer to our Linked List lesson). When a new node is created, it's added to the end of the Linked List, which means that its `next_node` field will be `null`. Hence, we start that field off with a default value of `null`. Once a new Node is added to the Linked List, this field will be updated to point to the new node.
 
-### Aside: Why Linked Lists instead of Arrays
+## Aside: Why Linked Lists instead of Arrays
 
 You may be wondering - why would we use Linked Lists to implement Open Addressing instead of using Arrays?
 
@@ -157,7 +157,7 @@ Basically, individual nodes of a Linked List can be stored at any address in mem
 
 Because of this, when we add a new Node to our list, our computer only needs to allocate memory for that new entry. This is much more efficient that having to reallocate memory for an entire array.
 
-### Building our Hashing Function
+## Building our Hashing Function
 
 Ideally, our hashing function will be able to take a variety of keys and consistently generate unique numberical values based on those keys.
 
@@ -206,7 +206,7 @@ Let's break down what's going on here.
     
 We now have a decent solution for generating unique values based on any given key. We will still likely experience collisions on our hash table, but ensuring that each key has a unique hash value will help minimize the number of collisions our hash table generates.
 
-### Getting the Index from the Hash
+## Getting the Index from the Hash
 
 As you may have noticed, the hash values we'll be generating for each key will be fairly large numbers. (The value generated for `e` in `teach` was <em>over 10000!</em>)
 
@@ -266,5 +266,61 @@ class HashTable:
         return index
 ```
   
+## Inserting Key-Value Pairs
 
+Ok, we've got our `init` functions set up, we have a decent hashing function we can use to hash keys - now we actually need a way to start putting key value pairs in our hash table!
+
+To accomplish this, we're going to need to work in two of our classes - our HashTable class itself and our LinkedList class.
+
+Let's start with our LinkedList class.
+
+### LinkedList Insert
+
+If you consult the `init` method for our hash table, you'll see that each bucket in our underlying array is storing a LinkedList. We've set it up this way because we're using _open addressing_ to handle collisions.
+
+So, our LinkedList insert will be very similar to any other LinkedList insert operation. However, let's add a few key stipulations:
+
+- If we already have a specific key stored in our hash table, any inserts to that key will _replace_ the value associated with the existing key, rather than entering a brand new key value pair.
+  - So, we'll need to check to see if the key we're inserting is already in our LinkedList.
+- We want the return value of this method to be the value that we're entering into our Hash Table.
+  - You can set your Hash Table up to return any number of values from your insert method - what do you think is an appropriate return value?
+  
+
+Let's start by declaring our method:
+  
+Python:
+```
+def insert(self, key, val):
+```
+We want to store both the key and the value in an individual Node within our LinkedList, so we'll need to pass both as arguments.
+
+Next, we need to check and see if our LinkedList even has anything in it! If it doesn't, we'll need to set the head to a new Node containing our key and value:
+
+Python
+```
+def insert(self, key, val):
+    if self.head == None:
+        self.head = Node(key, val)
+        return val
+```
+
+Cool! Now we can give our LinkedList a proper head if it doesn't have one already.
+
+But what if we already have a `head` node, and that node already has the key that we're passing in? We'll need some conditional logic to handle that, and update the value associated with that key in our head node:
+
+```
+ if self.head.key == key:
+    self.head.val = val
+    return val
+```
+
+Okay, that's all well and good, but we're using a LinkedList to handle _collisions_ which mean we'll need to be able to insert new nodes if our `head` node already has a value, and is storing a key that's different than the one we're inserting.
+
+To do this, we're going to be iterating over the nodes in our LinkedList to check and see if our key already exists in our hash table, in which case we'll want to update its value, or if we've reached the end of our LinkedList, in which case we'll want to enter a new node.
+
+As we iterate through, we need to keep track of our _current node_. It will start at the `head` node:
+
+```
+current_node = self.head
+```
 
