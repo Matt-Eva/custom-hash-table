@@ -314,7 +314,7 @@ But what if we already have a `head` node, and that node already has the key tha
     return val
 ```
 
-Okay, that's all well and good, but we're using a LinkedList to handle _collisions_ which mean we'll need to be able to insert new nodes if our `head` node already has a value, and is storing a key that's different than the one we're inserting.
+Okay, that's all well and good, but we're using a LinkedList to handle _collisions_ which mean we'll need to be able to insert new nodes if our `head` node already has a value and is storing a key that's different than the one we're inserting.
 
 To do this, we're going to be iterating over the nodes in our LinkedList to check and see if our key already exists in our hash table, in which case we'll want to update its value, or if we've reached the end of our LinkedList, in which case we'll want to enter a new node.
 
@@ -322,5 +322,71 @@ As we iterate through, we need to keep track of our _current node_. It will star
 
 ```
 current_node = self.head
+```
+
+Now, we'll use Python's `while` loop to iterate over our nodes.
+
+We want to iterate over nodes until we either reach the end of the LinkedList or find a node that holds they key that we're inserting.
+
+We know that the node at the end of the LinkedList will have a `next_node` property of `None`, so we can set up our while loop as follows:
+
+```
+while current_node.next_node != None:
+```
+
+As we loop through, we'll be changing the value of our `current_node` variable to the `next_node` in the LinkedList. 
+
+But, before we do so, we want to check and see if the `current_node` already contains the key we're trying to insert. If it does, we want to update the value associated with that key to be the newly inserted value, and use `return` to return that new value and exit the `insert` method.
+
+So, we can update our `while` loop to look as such:
+
+```
+current_node = self.head
+while current_node.next_node != None:
+    if current_node.key == key:
+        current_node.val = val
+        return val
+
+    current_node = current_node.next_node 
+```
+
+Finally, we need to write logic that will insert a new node with our new key value pair at the end of our LinkedList if none of our existing nodes contain the key we're trying to insert:
+
+```
+current_node = self.head
+while current_node.next_node != None:
+    if current_node.key == key:
+        current_node.val = val
+        return val
+
+    current_node = current_node.next_node 
+    
+current_node.next_node = Node(key, val)
+return val
+```
+
+Great! Our LinkedList Insert function is complete!
+
+```
+ def insert(self, key, val):
+    if self.head == None:
+        self.head = Node(key, val)
+        return val
+
+    if self.head.key == key:
+            self.head.val = val
+            return val
+
+    current_node = self.head
+
+    while current_node.next_node != None:
+        if current_node.key == key:
+            current_node.val = val
+            return val
+
+        current_node = current_node.next_node
+
+    current_node.next_node = Node(key, val)
+    return val
 ```
 
