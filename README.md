@@ -390,3 +390,45 @@ Great! Our LinkedList Insert function is complete!
     return val
 ```
 
+### Hash Table Insert
+
+Okay, our LinkedList insert method is good to go. Now we need to set up our Hash Table insert method as well. 
+
+We're going to be making use of a couple other methods we've already written!
+
+First, let's declare our method:
+
+```
+def insert(self, key, value):
+```
+
+Next, within this method, we'll need to pass our key through our hashing function and get the corresponding index. We can use the `get_index` method we set up earlier to do this!
+
+```
+def insert(self, key, value):
+    index = self.get_index(key)
+```
+
+Once we have the index, we can access the appropriate bucket into which we'll want to add or update our key value pair:
+
+```
+def insert(self, key, value):
+    index = self.get_index(key)
+    bucket = self.buckets[index]
+```
+
+Remember that each bucket is an instance of our LinkedList class. Now that we have the correct bucket, we can insert our new key value pair using our LinkedList insert method we just wrote!
+
+```
+def insert(self, key, value):
+    index = self.get_index(key)
+    bucket = self.buckets[index]
+    inserted_value = bucket.insert(key, value)
+    return inserted_value 
+```
+
+Remember that we set up our LinkedList insert method to return the value that was inputted. We're following a similar approach here by capturing that inserted value in a variable and returning it. 
+
+You may want to set up your insert functions to return a different value - a Boolean, for example. Try to play around with your code to see how you could configure your methods to return that type of value instead!
+
+## Reading Values
